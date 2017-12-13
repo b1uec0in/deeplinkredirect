@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+	<title>Deep link redirect</title>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<script type="text/jscript">
+
+		function checkUrl() {
+			var qIndex = document.location.href.indexOf('?cid=');
+			if (qIndex > 0) {
+				var cid = document.location.href.substr(qIndex + 5);
+          window.open("musicmate3://view/channel?cid=" + cid);
+        }
+		}
+
+	</script>
+	<style type="text/css">
+		ul
+		{
+			padding-left: 14pt;
+			margin-top: 5pt;
+		}
+		li
+		{
+			margin-bottom: 5pt;
+		}
+	</style>
+</head>
+<body onload="checkUrl()">
+redirect musicmate3 url test
+</body>
+</html>
+
