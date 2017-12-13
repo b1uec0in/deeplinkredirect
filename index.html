@@ -5,13 +5,140 @@
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 	<script type="text/jscript">
 
+		function getPackageName() {
+			return "skplanet.musicmate";
+		}
+
+		function openUrlSchemeEx_android_intent(app_url_scheme, package, app_name) {
+			var scheme = app_url_scheme.substr(0, app_url_scheme.indexOf(":"));
+			var res = app_url_scheme.substr(app_url_scheme.indexOf(":") + 1);
+			document.location = "intent:" + res + "#Intent;scheme=" + scheme + ";package=" + package + ";end";
+		}
+
+		function openUrlSchemeEx_iOS_chrome(app_url_scheme, app_install_url, app_name) {
+			var win = window.open(app_url_scheme, "_self");
+
+			setTimeout(function () {
+				var result = false;
+				try {
+					var a = win.location.href;
+					result = true;
+				}
+				catch (e) {
+					result = false;
+				}
+				//iframe.remove();
+
+				if (!result) {
+					confirmInstall(app_url_scheme, app_install_url, app_name);
+				}
+			}, 300);
+		}
+
+		function openUrlSchemeEx_android(app_url_scheme, app_install_url, app_name) {
+			var iframe = document.createElement('iframe');
+			iframe.setAttribute('src', app_url_scheme);
+			iframe.setAttribute('width', '1px');
+			iframe.setAttribute('height', '1px');
+			document.documentElement.appendChild(iframe);
+			//iframe.parentNode.removeChild(iframe);
+			//iframe = null;
+
+			//var win = window.open(app_url_scheme, "_self");
+
+			setTimeout(function () {
+				var result = false;
+				try {
+					var a = iframe.contentDocument.location.href;
+					result = true;
+				}
+				catch (e) {
+					result = false;
+				}
+				//iframe.remove();
+
+				if (!result) {
+					confirmInstall(app_url_scheme, app_install_url, app_name);
+				}
+			}, 300);
+
+		}
+
+		function openUrlSchemeEx_timeOutCheck(app_url_scheme, app_install_url, app_name) {
+			if (!isMomlViewerWebView()) {
+				var start = new Date();
+				setTimeout(function () {
+					if (new Date() - start < 2000) {
+						confirmInstall(app_url_scheme, app_install_url, app_name);
+					}
+				}, 1500);
+			}
+			try {
+				window.location.href = app_url_scheme;
+			} catch (e) {
+				alert(e);
+			}
+
+		}
+
+		function confirmInstall(app_url_scheme, app_install_url, app_name) {
+			showAfterInstallMsg();
+			if (confirm(strEnKo('Do you want to install ' + app_name + '?', ' ' + app_name + ' 를 설치하겠습니까?'))) {
+				document.location = app_install_url;
+			}
+		}
+
+		function isAndroid() {
+			if (navigator.userAgent.indexOf("Android") >= 0)
+				return true;
+			return false;
+		}
+		function isiOS() {
+			if (navigator.userAgent.indexOf("iPhone") >= 0)
+				return true;
+			if (navigator.userAgent.indexOf("iPad") >= 0)
+				return true;
+			if (navigator.userAgent.indexOf("iPod") >= 0)
+				return true;
+
+			return false;
+		}
+
+		function isSafari() {
+			return is_safari = navigator.userAgent.indexOf("Safari") >= 0;
+		}
+
+		function isChrome() {
+			return is_safari = navigator.userAgent.indexOf("Chrome") >= 0;
+		}
+
+
 		function checkUrl() {
 			var qIndex = document.location.href.indexOf('?cid=');
 			if (qIndex > 0) {
 				var cid = document.location.href.substr(qIndex + 5);
-          window.open("musicmate3://view/channel?cid=" + cid);
-        }
+                                var url = "musicmate3://view/channel?cid=" + cid;
+				
+				window.setTimeout(function () {
+					openUrl(url);
+				}, 1000);
+                       }
 		}
+
+		function openUrl(app_url) {
+			var schemeUrl = app_url;
+
+			if (isAndroid()) {
+				if (isChrome())
+					openUrlSchemeEx_android_intent(schemeUrl, getPackageName(), "MusicMate");
+				else
+					openUrlSchemeEx_android(schemeUrl, "market://details?id=" + getPackageName(), "MusicMate");
+			} else if (isiOS()) {
+				openUrlSchemeEx_timeOutCheck(schemeUrl, "http://itunes.apple.com/app/id893554325", "MusicMate");
+			}
+		}
+
+
 
 	</script>
 	<style type="text/css">
@@ -27,7 +154,7 @@
 	</style>
 </head>
 <body onload="checkUrl()">
-redirect musicmate3 url test
+redirect musicmate3 url test 2
 </body>
 </html>
 
