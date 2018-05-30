@@ -114,10 +114,10 @@
 
 
 		function checkUrl() {
-			var qIndex = document.location.href.indexOf('?cid=');
+			var qIndex = document.location.href.indexOf('?url=');
 			if (qIndex > 0) {
-				var cid = document.location.href.substr(qIndex + 5);
-                                var url = "musicmate3://view/channel?cid=" + cid;
+				var url = document.location.href.substr(qIndex + 5);
+                                url = decodeURIComponent(url);
 				
 				window.setTimeout(function () {
 					openUrl(url);
