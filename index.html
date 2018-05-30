@@ -120,7 +120,8 @@
                                 url = decodeURIComponent(url);
 				
 				window.setTimeout(function () {
-					openUrl(url);
+					window.location.href = url;
+					//openUrl(url);
 				}, 1000);
                        }
 		}
