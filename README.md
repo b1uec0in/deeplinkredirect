@@ -1,9 +1,7 @@
 # deeplinkredirect
 
 ## usage
-```
-https://b1uec0in.github.io/deeplinkredirect?url=[url]&androidId=[Android PackageName]&iosId=[iOS App ID]&title=[title]
-```
+`https://b1uec0in.github.io/deeplinkredirect?url=[url]&androidId=[Android PackageName]&iosId=[iOS App ID]&title=[title]`
 
 * url: Deep link url
 * androidId: Android package name
