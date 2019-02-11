@@ -30,15 +30,10 @@
    		if (url == null) {
    			return;
    		}
-   		
-   		if (appName == null) {
-   			showMessage("appName is not specified.");
-   			return;
-   		}
-   		
+   		  		
     	if (isAndroid()) {
 			if (url.startsWith("intent:")) {
-				window.location.href = url;
+				document.location = url;
 			} else if (androidId != null) {
 				if (isChrome())
 					openUrlSchemeEx_android_intent(url, androidId, appName);
@@ -113,6 +108,12 @@
 		}, 300);
 
 	}
+	
+	function openUrlSchemeEx_android_intent(app_url_scheme, package, app_name) {
+		var scheme = app_url_scheme.substr(0, app_url_scheme.indexOf(":"));
+		var res = app_url_scheme.substr(app_url_scheme.indexOf(":") + 1);
+		document.location = "intent:" + res + "#Intent;scheme=" + scheme + ";package=" + package + ";end";
+	}	
 
 	function openUrlSchemeEx_timeOutCheck(app_url_scheme, app_install_url, app_name) {
 		if (!isMomlViewerWebView()) {
@@ -133,7 +134,10 @@
 
 	function confirmInstall(app_url_scheme, app_install_url, app_name) {
 		showAfterInstallMsg();
-		if (confirm(strEnKo('Do you want to install ' + app_name + '?', ' ' + app_name + ' 를 설치하겠습니까?'))) {
+		if (app_name == null) {
+			app_name="";
+		}
+		if (confirm('Do you want to install ' + app_name + '?')) {
 			document.location = app_install_url;
 		}
 	}
