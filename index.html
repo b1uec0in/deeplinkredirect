@@ -37,7 +37,7 @@
    		}
    		
     	if (isAndroid()) {
-			if (url.startWith("intent:")) {
+			if (url.startsWith("intent:")) {
 				window.location.href = url;
 			} else if (androidId != null) {
 				if (isChrome())
