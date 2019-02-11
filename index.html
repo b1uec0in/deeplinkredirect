@@ -5,139 +5,164 @@
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 	<script type="text/jscript">
 
-		function getPackageName() {
-			return "skplanet.musicmate";
-		}
-
-		function openUrlSchemeEx_android_intent(app_url_scheme, package, app_name) {
-			var scheme = app_url_scheme.substr(0, app_url_scheme.indexOf(":"));
-			var res = app_url_scheme.substr(app_url_scheme.indexOf(":") + 1);
-			document.location = "intent:" + res + "#Intent;scheme=" + scheme + ";package=" + package + ";end";
-		}
-
-		function openUrlSchemeEx_iOS_chrome(app_url_scheme, app_install_url, app_name) {
-			var win = window.open(app_url_scheme, "_self");
-
-			setTimeout(function () {
-				var result = false;
-				try {
-					var a = win.location.href;
-					result = true;
-				}
-				catch (e) {
-					result = false;
-				}
-				//iframe.remove();
-
-				if (!result) {
-					confirmInstall(app_url_scheme, app_install_url, app_name);
-				}
-			}, 300);
-		}
-
-		function openUrlSchemeEx_android(app_url_scheme, app_install_url, app_name) {
-			var iframe = document.createElement('iframe');
-			iframe.setAttribute('src', app_url_scheme);
-			iframe.setAttribute('width', '1px');
-			iframe.setAttribute('height', '1px');
-			document.documentElement.appendChild(iframe);
-			//iframe.parentNode.removeChild(iframe);
-			//iframe = null;
-
-			//var win = window.open(app_url_scheme, "_self");
-
-			setTimeout(function () {
-				var result = false;
-				try {
-					var a = iframe.contentDocument.location.href;
-					result = true;
-				}
-				catch (e) {
-					result = false;
-				}
-				//iframe.remove();
-
-				if (!result) {
-					confirmInstall(app_url_scheme, app_install_url, app_name);
-				}
-			}, 300);
-
-		}
-
-		function openUrlSchemeEx_timeOutCheck(app_url_scheme, app_install_url, app_name) {
-			if (!isMomlViewerWebView()) {
-				var start = new Date();
-				setTimeout(function () {
-					if (new Date() - start < 2000) {
-						confirmInstall(app_url_scheme, app_install_url, app_name);
-					}
-				}, 1500);
-			}
-			try {
-				window.location.href = app_url_scheme;
-			} catch (e) {
-				alert(e);
-			}
-
-		}
-
-		function confirmInstall(app_url_scheme, app_install_url, app_name) {
-			showAfterInstallMsg();
-			if (confirm(strEnKo('Do you want to install ' + app_name + '?', ' ' + app_name + ' 를 설치하겠습니까?'))) {
-				document.location = app_install_url;
-			}
-		}
-
-		function isAndroid() {
-			if (navigator.userAgent.indexOf("Android") >= 0)
-				return true;
-			return false;
-		}
-		function isiOS() {
-			if (navigator.userAgent.indexOf("iPhone") >= 0)
-				return true;
-			if (navigator.userAgent.indexOf("iPad") >= 0)
-				return true;
-			if (navigator.userAgent.indexOf("iPod") >= 0)
-				return true;
-
-			return false;
-		}
-
-		function isSafari() {
-			return is_safari = navigator.userAgent.indexOf("Safari") >= 0;
-		}
-
-		function isChrome() {
-			return is_safari = navigator.userAgent.indexOf("Chrome") >= 0;
-		}
-
-
-		function checkUrl() {
-			var qIndex = document.location.href.indexOf('?url=');
-			if (qIndex > 0) {
-				var url = document.location.href.substr(qIndex + 5);
-                                url = decodeURIComponent(url);
-				
-				window.setTimeout(function () {
+    function urlParameter(name) {
+        var url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+    
+    function checkUrl() {
+   		var title = urlParameter("title")
+   		var appName = urlParameter("appName")
+   		var url = urlParameter("url")
+   		var androidId = urlParameter("androidId")
+   		var iOSId = urlParameter("iOSId")
+   		
+   		if (title != null) {
+   			document.title = title
+    		document.getElementById("title").innerHTML = title;
+   		}
+   		
+   		if (url == null) {
+   			return;
+   		}
+   		
+   		if (appName == null) {
+   			showMessage("appName is not specified.");
+   			return;
+   		}
+   		
+    	if (isAndroid()) {
+    		if (android != null) {
+				if (url.startWith("intent:")) {
 					window.location.href = url;
-					//openUrl(url);
-				}, 1000);
-                       }
-		}
-
-		function openUrl(app_url) {
-			var schemeUrl = app_url;
-
-			if (isAndroid()) {
-				if (isChrome())
-					openUrlSchemeEx_android_intent(schemeUrl, getPackageName(), "MusicMate");
-				else
-					openUrlSchemeEx_android(schemeUrl, "market://details?id=" + getPackageName(), "MusicMate");
-			} else if (isiOS()) {
-				openUrlSchemeEx_timeOutCheck(schemeUrl, "http://itunes.apple.com/app/id893554325", "MusicMate");
+				} else {
+					if (isChrome())
+						openUrlSchemeEx_android_intent(url, androidId, appName);
+					else
+						openUrlSchemeEx_android(url, "market://details?id=" + androidId, appName);
+				}
+			} else if (iOSId != null){
+	    		showMessage("Please open this page in iOS device.");
 			}
+    	
+    	} else if (isiOS()) {
+    		if(iOSId != null) {
+				openUrlSchemeEx_timeOutCheck(url, "http://itunes.apple.com/app/id" + iOSId, appName);
+			} else if (androidId != null){
+	    		showMessage("Please open this page in Android device.");
+			}
+    	} else {
+    		showMessage("Please open this page in Android or iPhone device.");
+    	}
+    }
+    
+    function showMessage(msg) {
+    	document.getElementById("msg").innerHTML = msg;
+    }
+    
+
+	function openUrlSchemeEx_iOS_chrome(app_url_scheme, app_install_url, app_name) {
+		var win = window.open(app_url_scheme, "_self");
+
+		setTimeout(function () {
+			var result = false;
+			try {
+				var a = win.location.href;
+				result = true;
+			}
+			catch (e) {
+				result = false;
+			}
+			//iframe.remove();
+
+			if (!result) {
+				confirmInstall(app_url_scheme, app_install_url, app_name);
+			}
+		}, 300);
+	}
+
+	function openUrlSchemeEx_android(app_url_scheme, app_install_url, app_name) {
+		var iframe = document.createElement('iframe');
+		iframe.setAttribute('src', app_url_scheme);
+		iframe.setAttribute('width', '1px');
+		iframe.setAttribute('height', '1px');
+		document.documentElement.appendChild(iframe);
+		//iframe.parentNode.removeChild(iframe);
+		//iframe = null;
+
+		//var win = window.open(app_url_scheme, "_self");
+
+		setTimeout(function () {
+			var result = false;
+			try {
+				var a = iframe.contentDocument.location.href;
+				result = true;
+			}
+			catch (e) {
+				result = false;
+			}
+			//iframe.remove();
+
+			if (!result) {
+				confirmInstall(app_url_scheme, app_install_url, app_name);
+			}
+		}, 300);
+
+	}
+
+	function openUrlSchemeEx_timeOutCheck(app_url_scheme, app_install_url, app_name) {
+		if (!isMomlViewerWebView()) {
+			var start = new Date();
+			setTimeout(function () {
+				if (new Date() - start < 2000) {
+					confirmInstall(app_url_scheme, app_install_url, app_name);
+				}
+			}, 1500);
 		}
+		try {
+			window.location.href = app_url_scheme;
+		} catch (e) {
+			alert(e);
+		}
+
+	}
+
+	function confirmInstall(app_url_scheme, app_install_url, app_name) {
+		showAfterInstallMsg();
+		if (confirm(strEnKo('Do you want to install ' + app_name + '?', ' ' + app_name + ' 를 설치하겠습니까?'))) {
+			document.location = app_install_url;
+		}
+	}
+
+	function isAndroid() {
+		if (navigator.userAgent.indexOf("Android") >= 0)
+			return true;
+		return false;
+	}
+	function isiOS() {
+		if (navigator.userAgent.indexOf("iPhone") >= 0)
+			return true;
+		if (navigator.userAgent.indexOf("iPad") >= 0)
+			return true;
+		if (navigator.userAgent.indexOf("iPod") >= 0)
+			return true;
+
+		return false;
+	}
+
+	function isSafari() {
+		return is_safari = navigator.userAgent.indexOf("Safari") >= 0;
+	}
+
+	function isChrome() {
+		return is_safari = navigator.userAgent.indexOf("Chrome") >= 0;
+	}
+
 
 
 
@@ -155,7 +180,9 @@
 	</style>
 </head>
 <body onload="checkUrl()">
-redirect url.
+<h3 id="title"></h3>
+<span id="msg">redirect url.</span>
+<span id="link"></span>
 </body>
 </html>
 
