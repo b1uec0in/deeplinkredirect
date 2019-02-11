@@ -37,16 +37,15 @@
    		}
    		
     	if (isAndroid()) {
-    		if (android != null) {
-				if (url.startWith("intent:")) {
-					window.location.href = url;
-				} else {
-					if (isChrome())
-						openUrlSchemeEx_android_intent(url, androidId, appName);
-					else
-						openUrlSchemeEx_android(url, "market://details?id=" + androidId, appName);
-				}
-			} else if (iOSId != null){
+			if (url.startWith("intent:")) {
+				window.location.href = url;
+			} else if (androidId != null) {
+				if (isChrome())
+					openUrlSchemeEx_android_intent(url, androidId, appName);
+				else
+					openUrlSchemeEx_android(url, "market://details?id=" + androidId, appName);
+			}
+			else if (iOSId != null){
 	    		showMessage("Please open this page in iOS device.");
 			}
     	
