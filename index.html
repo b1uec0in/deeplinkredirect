@@ -21,12 +21,17 @@
         var url = urlParameter("url")
         var androidId = urlParameter("androidId")
         var iosId = urlParameter("iosId")
+        var button = urlParameter("button")
            
         if (title != null) {
             document.title = title
             document.getElementById("title").innerHTML = title;
         }
-           
+
+        if (button != null) {
+            document.getElementById("button").innerHTML = button;
+        }
+
         if (url == null) {
             return;
         }
@@ -183,8 +188,10 @@
 </head>
 <body onload="checkUrl()">
 <h3 id="title"></h3>
-<span id="msg">redirect url.</span>
+<span id="msg"></span>
 <span id="link"></span>
+<br/>
+<button id="button" onclick="checkUrl()">Open</button>
 </body>
 </html>
 
