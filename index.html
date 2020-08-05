@@ -116,14 +116,13 @@
     }    
 
     function openUrlSchemeEx_timeOutCheck(app_url_scheme, app_install_url, app_name) {
-        if (!isMomlViewerWebView()) {
-            var start = new Date();
-            setTimeout(function () {
-                if (new Date() - start < 2000) {
-                    confirmInstall(app_url_scheme, app_install_url, app_name);
-                }
-            }, 1500);
-        }
+        var start = new Date();
+        setTimeout(function () {
+            if (new Date() - start < 2000) {
+                confirmInstall(app_url_scheme, app_install_url, app_name);
+            }
+        }, 1500);
+        
         try {
             window.location.href = app_url_scheme;
         } catch (e) {
