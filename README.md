@@ -12,5 +12,5 @@
   required: appName, url, (android Id or ios Id)
 
 ex)
-https://b1uec0in.github.io/deeplinkredirect?url=fb%3A%2F%2Fprofile%2F230785066962247&androidId=com.facebook.katana&iosId=id284882215&title=Google.com%20Facebook%20page
+https://b1uec0in.github.io/deeplinkredirect?url=fb%3A%2F%2Fprofile%2F717109328313938&androidId=com.facebook.katana&iosId=id284882215&title=Google.com%20Facebook%20page
 
